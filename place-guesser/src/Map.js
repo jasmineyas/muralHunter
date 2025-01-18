@@ -13,18 +13,20 @@ const center = {
 
 const Map = () => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.JASMINE_REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
     libraries,
   });
 
   if (loadError) return <div>Error loading maps</div>;
-  if (!isLoaded) return <div>Loading Maps...</div>;
+  if (!isLoaded) return <div>Loading Maps........</div>;
+
+  console.log({ isLoaded, loadError });
 
   return (
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
+      zoom={10}
       center={center}
-      zoom={10} // Adjust the zoom level as needed
     />
   );
 };
