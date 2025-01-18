@@ -1,4 +1,5 @@
 # placeGuesser
-nwPlus2025
-Charlie joined.
-Vincent joined
+
+Author: Nicole, Vincent, Charlie & Jasmine
+Location: UBC
+Hackathon: nwPlus2025
