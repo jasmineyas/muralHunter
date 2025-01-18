@@ -13,7 +13,7 @@ const center = {
 
 const Map = () => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.JASMINE_REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
     libraries,
   });
 
