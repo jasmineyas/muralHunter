@@ -1,5 +1,5 @@
-import React from "react";
-import { GoogleMap, useLoadScript } from "@react-google-maps/api";
+import React, { useState } from "react";
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -17,6 +17,18 @@ const Map = () => {
     libraries,
   });
 
+  const [markerPosition, setMarkerPosition] = useState(null);
+
+  // Handle map clicks
+  const handleMapClick = (event) => {
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+    const position = { lat, lng };
+
+    setMarkerPosition(position); // Update marker position
+    console.log(position);
+  };
+
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps........</div>;
 
@@ -27,7 +39,10 @@ const Map = () => {
       mapContainerStyle={mapContainerStyle}
       zoom={10}
       center={center}
-    />
+      onClick={handleMapClick} // Add click handler
+    >
+      {markerPosition && <Marker position={markerPosition} />} {/* Render marker */}
+    </GoogleMap>
   );
 };
 
