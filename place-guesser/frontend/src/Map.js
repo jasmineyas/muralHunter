@@ -16,6 +16,7 @@ const Map = ({
   positions,
   setPositions,
   targetPosition,
+  setTargetPosition,
   mapMode,
 }) => {
   const { isLoaded, loadError } = useLoadScript({
@@ -44,6 +45,11 @@ const Map = ({
       });
       // console.log(positions);
       console.log(`Player ${activePlayer} dropped a pin at:`, { lat, lng });
+    }
+    if (mapMode === 'beta') {
+      const lat = event.latLng.lat();
+      const lng = event.latLng.lng();
+      setTargetPosition({ lat, lng }); // Update the target position state
     }
   };
 
@@ -77,6 +83,14 @@ const Map = ({
         </>
       )}
       {mapMode === 'result' && (
+        <>
+          <Marker
+            position={targetPosition} // Placeholder marker
+            icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+          />
+        </>
+      )}
+      {mapMode === 'beta' && (
         <>
           <Marker
             position={targetPosition} // Placeholder marker
