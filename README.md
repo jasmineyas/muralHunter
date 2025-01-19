@@ -1,4 +1,4 @@
-# Mural Guessor
+# Mural Hunter
 
 - Teammates: Nicole, Vincent, Charlie & Jasmine
 - Hackathon: [nwPlus 2025](https://www.nwplus.io)
