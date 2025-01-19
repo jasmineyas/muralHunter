@@ -19,10 +19,6 @@ const Map = ({ activePlayer }) => {
 
   const [positions, setPositions] = useState([{ lat: null, lng: null }, { lat: null, lng: null }]);
 
-  // Log updated positions whenever the state changes
-  // useEffect(() => {
-  //   console.log(positions);
-  // }, [positions]);
 
   // Handle map clicks
   const handleMapClick = (event) => {
