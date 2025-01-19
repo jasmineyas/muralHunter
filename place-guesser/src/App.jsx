@@ -31,6 +31,13 @@ function App() {
     handleNavigation("result");
   };
 
+  const handleEndGame = () => {
+    console.log("End game pressed.");
+    setMapMode("start");
+    setActivePlayer(null);
+    handleNavigation("result");
+  };
+
   // Fetch a new image for the next mural
   const handleNextMural = () => {
     console.log("Next mural clicked. Fetching a new image...");
