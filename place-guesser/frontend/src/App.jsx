@@ -127,7 +127,7 @@ function App() {
                 masterpiece. 🎨✨
               </p>
               <img style={{ marginTop: '1em' }} src={welcome} alt="welcome" />
-              <button onClick={handleStartGame}>Start Game</button>
+              <button onClick={handleStartGame}>Start game</button>
             </>
           )}
 
@@ -200,7 +200,7 @@ function App() {
                 Remember to go outside and actually touch grass. 🌿 😎
               </p>
               <img style={{ marginTop: '1em' }} src={end} alt="end" />
-              <button onClick={handlePlayAgain}>Play Again</button>
+              <button onClick={handlePlayAgain}>Play again</button>
             </>
           )}
         </div>
