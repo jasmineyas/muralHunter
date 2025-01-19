@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 
 const libraries = ["places"];
@@ -11,49 +11,49 @@ const center = {
   lng: -123.11934, // Vancouver longitude
 };
 
-const Map = ({ activePlayer, userOneGuesses }) => {
+const Map = ({
+  activePlayer,
+  positions,
+  setPositions,
+  targetPosition,
+  mapMode,
+}) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
     libraries,
   });
 
-  const [positions, setPositions] = useState([
-    { lat: null, lng: null },
-    { lat: null, lng: null },
-  ]);
-
   const [lineCoordinates, setLineCoordinates] = useState([]);
 
+  // Log updated positions whenever the state changes
+  useEffect(() => {
+    console.log("Updated positions:", positions);
+  }, [positions]);
 
   // Handle map clicks
   const handleMapClick = (event) => {
-
-    if (activePlayer === null) {
-      setPositions([
-        { lat: null, lng: null },
-        { lat: null, lng: null },
-      ]);
-      return;
+    console.log("Map clicked:", event.latLng.toJSON());
+    console.log("activePlayer", activePlayer);
+    console.log("mapMode", mapMode);
+    if (mapMode === "input") {
+      const lat = event.latLng.lat();
+      const lng = event.latLng.lng();
+      // setMarkerPosition(position); // Update marker position, single-player old code
+      setPositions((prevPositions) => {
+        const updatedPositions = [...prevPositions];
+        updatedPositions[activePlayer - 1] = { lat, lng }; // Update the active player's position
+        return updatedPositions;
+      });
+      // console.log(positions);
+      console.log(`Player ${activePlayer} dropped a pin at:`, { lat, lng });
     }
-
-    const lat = event.latLng.lat();
-    const lng = event.latLng.lng();
-    // setMarkerPosition(position); // Update marker position, single-player old code
-
-    setPositions((prevPositions) => {
-      const updatedPositions = [...prevPositions];
-      updatedPositions[activePlayer - 1] = { lat, lng }; // Update the active player's position
-      return updatedPositions;
-    });
-
-    // console.log(positions);
   };
 
   useEffect(() => {
-    if (userOneGuesses) {
+    if (targetPosition) {
       setLineCoordinates(positions.filter((pos) => pos.lat && pos.lng));
     }
-  }, [userOneGuesses, positions]);
+  }, [targetPosition, positions]);
 
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps........</div>;
@@ -65,14 +65,10 @@ const Map = ({ activePlayer, userOneGuesses }) => {
   return (
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
-      zoom={10}
+      zoom={12}
       center={center}
       onClick={handleMapClick} // Add click handler
     >
-      {/* Render the target marker */}
-      {userOneGuesses && activePlayer === 3 && (
-        <Marker position={userOneGuesses} label="Target" />
-      )}
 
       {/* Render Player 1 and Player 2 markers */}
       {activePlayer === 3 && positions[0].lat && 
@@ -88,17 +84,29 @@ const Map = ({ activePlayer, userOneGuesses }) => {
       />}
 
       {/* Render markers for Player 1 and Player 2 */}
-      {activePlayer === 1 && positions[0].lat && (
-        <Marker
-          position={positions[0]}
-          icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-        />
+      {mapMode === "input" && (
+        <>
+          {activePlayer === 1 && positions[0].lat && (
+            <Marker
+              position={positions[0]}
+              icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+            />
+          )}
+          {activePlayer === 2 && positions[1].lat && (
+            <Marker
+              position={positions[1]}
+              icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+            />
+          )}
+        </>
       )}
-      {activePlayer === 2 && positions[1].lat && (
-        <Marker
-          position={positions[1]}
-          icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-        />
+      {mapMode === "result" && (
+        <>
+          <Marker
+            position={targetPosition} // Placeholder marker
+            icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+          />
+        </>
       )}
     </GoogleMap>
 
