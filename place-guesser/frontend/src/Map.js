@@ -1,5 +1,5 @@
-import React, { useState, useEffect, act } from 'react';
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import React, { useState, useEffect, act } from "react";
+import { GoogleMap, useLoadScript, MarkerF, PolylineF } from "@react-google-maps/api";
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -11,11 +11,38 @@ const center = {
   lng: -123.127337, // Vancouver longitude
 };
 
+const DashedPolyline = ({
+  path,
+  color = "#00FFFF",
+  weight = 2,
+  dashLength = "10px"
+}) => {
+  return (
+    <PolylineF
+      path={path}
+      options={{
+        strokeColor: color,
+        strokeOpacity: 0, // Make the solid line invisible for dashed effect
+        strokeWeight: weight, // Line thickness
+        icons: [
+          {
+            icon: { path: "M 0,-1 0,1", strokeOpacity: 1, scale: 2 },
+            offset: "0",
+            repeat: dashLength
+          }
+        ]
+      }}
+    />
+  );
+};
+
 const Map = ({
   activePlayer,
   positions,
   setPositions,
   targetPosition,
+  lineCoordinates,
+  setLineCoordinates,
   mapMode,
 }) => {
   const { isLoaded, loadError } = useLoadScript({
@@ -47,10 +74,18 @@ const Map = ({
     }
   };
 
+  useEffect(() => {
+    if (targetPosition) {
+      setLineCoordinates(positions.filter((pos) => pos.lat && pos.lng));
+    }
+  }, [targetPosition, positions]);
+
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps........</div>;
 
   //console.log({ isLoaded, loadError });
+
+  console.log(positions);
 
   return (
     <GoogleMap
@@ -59,17 +94,43 @@ const Map = ({
       center={center}
       onClick={handleMapClick} // Add click handler
     >
+
+      {/* Map the lineCoordinates to draw dashed lines to the target coordinate */}
+  {
+    activePlayer === 3 && lineCoordinates.map((coordinate, index) => (
+        <DashedPolyline
+          key={index}
+          path={[coordinate, targetPosition]}
+          color="#FF00FF"
+          dashLength="10px"
+        />
+    ))
+    }
+
+      {/* Render Player 1 and Player 2 markers */}
+      {activePlayer === 3 && positions[0].lat && 
+        <MarkerF 
+          position={positions[0]} 
+          icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+      />}
+      
+      {activePlayer === 3 && positions[1].lat && 
+        <MarkerF 
+        position={positions[1]} 
+        icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      />}
+
       {/* Render markers for Player 1 and Player 2 */}
       {mapMode === 'input' && (
         <>
           {activePlayer === 1 && positions[0].lat && (
-            <Marker
+            <MarkerF
               position={positions[0]}
               icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
             />
           )}
           {activePlayer === 2 && positions[1].lat && (
-            <Marker
+            <MarkerF
               position={positions[1]}
               icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             />
@@ -78,13 +139,14 @@ const Map = ({
       )}
       {mapMode === 'result' && (
         <>
-          <Marker
+          <MarkerF
             position={targetPosition} // Placeholder marker
             icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
           />
         </>
       )}
     </GoogleMap>
+
   );
 };
 

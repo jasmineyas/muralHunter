@@ -5,7 +5,7 @@ import welcome from './2.png';
 import end from './3.png';
 
 function App() {
-  const [activePlayer, setActivePlayer] = useState(1);
+  const [activePlayer, setActivePlayer] = useState(null);
   const [currentSidePanel, setSidePanel] = useState('start');
   const [currentRound, setCurrentRound] = useState(1);
   const [positions, setPositions] = useState([
@@ -18,6 +18,7 @@ function App() {
 
   const [muralData, setMuralData] = useState([]);
   const [currentMuralIndex, setCurrentMuralIndex] = useState(0);
+  const [lineCoordinates, setLineCoordinates] = useState([]);
 
   // Fetch data from the backend
   useEffect(() => {
@@ -56,6 +57,7 @@ function App() {
       { lat: null, lng: null },
       { lat: null, lng: null },
     ]);
+    setLineCoordinates([]);
   };
 
   const handleSubmit = () => {
@@ -164,6 +166,7 @@ function App() {
           setPositions={setPositions}
           targetPosition={targetPosition}
           mapMode={mapMode}
+          setLineCoordinates={setLineCoordinates}
         />
       </div>
     </div>
