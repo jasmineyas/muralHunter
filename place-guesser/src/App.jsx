@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Map from "./Map";
 import placeholder1 from "./place-holder.jpg";
@@ -20,6 +20,8 @@ function App() {
   }); // placeholder for mount pleaset
 
   const [mapMode, setMapMode] = useState("input"); // Determines map behavior (input/result)
+  const [submitEnabled, setSubmitEnabled] = useState(false);
+
   const [currentImage, setCurrentImage] = useState(placeholder1);
 
   const handleNavigation = (nextState) => {
@@ -52,9 +54,16 @@ function App() {
     setCurrentRound(1);
   };
 
-  console.log("Current Side Panel:", currentSidePanel);
-  console.log("Active Player:", activePlayer);
-  console.log("Map Mode:", mapMode);
+  useEffect(() => {
+    const bothPlayersReady =
+      positions[0].lat !== null && positions[1].lat !== null;
+    setSubmitEnabled(bothPlayersReady);
+  }, [positions]);
+
+  console.log("submitEnabled", submitEnabled);
+  //   console.log("Current Side Panel:", currentSidePanel);
+  //   console.log("Active Player:", activePlayer);
+  //   console.log("Map Mode:", mapMode);
 
   return (
     <div className="container">
@@ -103,13 +112,15 @@ function App() {
                   Player 2
                 </button>
               </div>
-              <button onClick={handleSubmit}>Submit</button>
+              <button onClick={handleSubmit} disabled={!submitEnabled}>
+                Submit
+              </button>
             </>
           )}
           {currentSidePanel === "result" && (
             <>
               <h1>Round {currentRound} result </h1>
-              <p> How close did you get?! Please see the map for results.</p>
+              <p> Whose guess is closer?! Please see the map for results.</p>
               <img src={placeholder1} alt="placeholder" />
               <div className="mural-description">
                 <p>
@@ -128,9 +139,11 @@ function App() {
                   The portraits reference two Mount Pleasant residents.
                   PaisleyNahanee (left side) is a Coast-Salish First Nations who
                   was born and grew up in Mount Pleasant. & Dr. Bob has worked
-                  at an area optometrist office for over 6 decades. As two
-                  longstanding residents, Paisley and Bob capture the essence,
-                  history and culture of Mount Pleasant.
+                  at an area optometrist office for over 6 decades.
+                </p>
+                <p>
+                  As two longstanding residents, Paisley and Bob capture the
+                  essence, history and culture of Mount Pleasant.
                 </p>
               </div>
               <div className="button-container">
@@ -149,7 +162,9 @@ function App() {
           {currentSidePanel === "end" && (
             <>
               <h1>Have a nice day! </h1>
-              <p className="welcome-end-text">Thank you for playing the game. </p>
+              <p className="welcome-end-text">
+                Thank you for playing the game.{" "}
+              </p>
               <p className="welcome-end-text">
                 Remember to go outside and actually touch grass. 🌿 😎
               </p>
