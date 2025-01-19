@@ -12,7 +12,10 @@ function App() {
     { lat: null, lng: null },
     { lat: null, lng: null },
   ]);
-  const [targetPosition, setTargetPosition] = useState({ lat: 49.2628, lng: -123.0995 });
+  const [targetPosition, setTargetPosition] = useState({
+    lat: 49.2628,
+    lng: -123.0995,
+  });
   const [mapMode, setMapMode] = useState('start');
   const [submitEnabled, setSubmitEnabled] = useState(false);
 
@@ -43,19 +46,28 @@ function App() {
   };
 
   const handleNextMural = () => {
-    const nextIndex = (currentMuralIndex + 1) % muralData.length;
-    setCurrentMuralIndex(nextIndex);
-    setTargetPosition({
-      lat: muralData[nextIndex].latitude,
-      lng: muralData[nextIndex].longitude,
-    });
-    setCurrentRound((prevRound) => prevRound + 1);
-    setSidePanel('input');
-    setMapMode('input');
-    setPositions([
-      { lat: null, lng: null },
-      { lat: null, lng: null },
-    ]);
+    const nextIndex = currentMuralIndex + 1;
+
+    if (nextIndex >= muralData.length) {
+      // If there are no more murals, switch to the "end" screen
+      setSidePanel('end');
+      setMapMode('start'); // Reset map mode if needed
+    } else {
+      // Otherwise, proceed to the next mural
+      setCurrentMuralIndex(nextIndex);
+      setTargetPosition({
+        lat: muralData[nextIndex].latitude,
+        lng: muralData[nextIndex].longitude,
+      });
+      setCurrentRound((prevRound) => prevRound + 1); // Increment the round number
+      setActivePlayer(1);
+      setSidePanel('input');
+      setMapMode('input');
+      setPositions([
+        { lat: null, lng: null },
+        { lat: null, lng: null },
+      ]);
+    }
   };
 
   const handleSubmit = () => {
@@ -105,7 +117,10 @@ function App() {
           {currentSidePanel === 'input' && muralData.length > 0 && (
             <>
               <h1>Round {currentRound}</h1>
-              <p>Drop a pin where you think the mural is located, then click submit.</p>
+              <p>
+                Drop a pin where you think the mural is located, then click
+                submit.
+              </p>
               <img
                 src={muralData[currentMuralIndex].url}
                 alt="Mural"
