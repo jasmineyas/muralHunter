@@ -192,7 +192,12 @@ function App() {
           {currentSidePanel === 'end' && (
             <>
               <h1>Thank you for playing!</h1>
-              <p>We hope you enjoyed exploring Vancouver's murals!</p>
+              <p className="welcome-end-text">
+                We hope you enjoyed exploring Vancouver's murals!
+              </p>
+              <p className="welcome-end-text">
+                Remember to go outside and actually touch grass. 🌿 😎
+              </p>
               <img style={{ marginTop: '1em' }} src={end} alt="end" />
               <button onClick={handlePlayAgain}>Play Again</button>
             </>
