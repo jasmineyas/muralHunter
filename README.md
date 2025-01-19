@@ -11,7 +11,7 @@
 
 [Submission link](https://devpost.com/software/muralhunter)
 
-# Tech Stack
+# Tech stack
 
 - Frontend: React + JavaScript
 - Backend: MongoDB
