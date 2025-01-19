@@ -32,7 +32,7 @@ const Map = () => {
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps........</div>;
 
-  console.log({ isLoaded, loadError });
+  //console.log({ isLoaded, loadError });
 
   return (
     <GoogleMap
@@ -41,7 +41,8 @@ const Map = () => {
       center={center}
       onClick={handleMapClick} // Add click handler
     >
-      {markerPosition && <Marker position={markerPosition} />} {/* Render marker */}
+      {markerPosition && <Marker position={markerPosition} />}{" "}
+      {/* Render marker */}
     </GoogleMap>
   );
 };
