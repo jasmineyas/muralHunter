@@ -5,6 +5,7 @@ import placeholder1 from './place-holder.jpg';
 import placeholder2 from './place-holder2.jpg';
 import uploadPlaceholder from './5.png';
 import welcome from './2.png';
+import menu from './7.png';
 import end from './3.png';
 import EXIF from 'exif-js';
 
@@ -23,6 +24,7 @@ function App() {
 
   const [mapMode, setMapMode] = useState('start'); // Determines map behavior (input/result)
   const [submitEnabled, setSubmitEnabled] = useState(false);
+  const [fileChanged, setFileChanged] = useState(false);
 
   const [currentImage, setCurrentImage] = useState(uploadPlaceholder);
 
@@ -93,6 +95,7 @@ function App() {
     const file = event.target.files[0];
 
     if (file) {
+      setFileChanged(true);
       // Preview the uploaded image
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -124,6 +127,10 @@ function App() {
     return ref === 'S' || ref === 'W' ? -decimal : decimal;
   };
 
+  useEffect(() => {
+    setSubmitEnabled(fileChanged);
+  }, [fileChanged]);
+
   return (
     <div className="container">
       <div className="side-panel">
@@ -148,17 +155,14 @@ function App() {
           )}
           {currentSidePanel === 'menu' && (
             <>
-              <h1>Select game mode!</h1>
-              <p className="welcome-end-text">
-                Play with a curated list of murals from Vancouver by our team!🎨
+              <h1>Choose your game mode!</h1>
+              <p>
+                Play with a friend using our curated list of Vancouver murals!
               </p>
               <button onClick={handleStartStandardGame}> Standard mode</button>
-              <p className="welcome-end-text">
-                Upload your own mural image to challenge your friends!✨
-              </p>
-              <img style={{ marginTop: '1em' }} src={welcome} alt="welcome" />
-
+              <p>Upload your own mural image for your friends to guess! 💪 </p>
               <button onClick={handleSetUpBeta}> Beta </button>
+              <img src={menu} alt="select-menu-graphic" />
             </>
           )}
           {currentSidePanel === 'beta' && (
@@ -175,7 +179,11 @@ function App() {
                   <img
                     src={currentImage}
                     alt="Uploaded Mural"
-                    style={{ maxWidth: '100%', height: 'auto' }}
+                    style={{
+                      maxWidth: '100%',
+                      height: 'auto',
+                      maxHeight: '500px',
+                    }}
                   />
                 </div>
               )}
@@ -190,7 +198,9 @@ function App() {
                   'No location data can be found in the photo. Please upload another image or provide a location manually by dropping a pin on the map.'
                 )}
               </p>
-              <button onClick={handleStartBetaGame}> Finish set up </button>
+              <button onClick={handleStartBetaGame} disabled={!submitEnabled}>
+                Finish set up
+              </button>
             </>
           )}
           {currentSidePanel === 'input' && (
@@ -201,7 +211,11 @@ function App() {
                 On the map, pleaes drop the pin at where you think the mural is
                 located, then click the submit button.📍
               </p>
-              <img src={currentImage} alt="currentImage" />
+              <img
+                className="mural-image"
+                src={currentImage}
+                alt="currentImage"
+              />
               <div className="button-group">
                 {/* Player 1 Button */}
                 <button
@@ -227,7 +241,11 @@ function App() {
             <>
               <h1>Round {currentRound} result </h1>
               <p> Whose guess is closer?! Please see the map for results.</p>
-              <img src={placeholder1} alt="placeholder" />
+              <img
+                className="mural-image"
+                src={currentImage}
+                alt="currentImage"
+              />
               <div className="mural-description">
                 <p>
                   <b> About this mural - The Present is a Gift (2021) </b>
