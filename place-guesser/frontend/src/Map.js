@@ -4,6 +4,7 @@ import {
   useLoadScript,
   MarkerF,
   PolylineF,
+  InfoWindowF,
 } from '@react-google-maps/api';
 
 const libraries = ['places'];
@@ -55,6 +56,43 @@ const Map = ({
     libraries,
   });
 
+  const [distances, setDistances] = useState({ player1: null, player2: null });
+
+  // Function to calculate distances using Distance Matrix API
+  const calculateDistances = () => {
+    if (!targetPosition || !positions[0].lat || !positions[1].lat) return;
+
+    const service = new window.google.maps.DistanceMatrixService();
+    const origins = [
+      new window.google.maps.LatLng(positions[0].lat, positions[0].lng),
+      new window.google.maps.LatLng(positions[1].lat, positions[1].lng),
+    ];
+    const destination = new window.google.maps.LatLng(
+      targetPosition.lat,
+      targetPosition.lng
+    );
+
+    service.getDistanceMatrix(
+      {
+        origins,
+        destinations: [destination],
+        travelMode: window.google.maps.TravelMode.DRIVING, // You can also use WALKING, BICYCLING, or TRANSIT
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          const distances = response.rows.map((row) => row.elements[0].distance.text);
+          setDistances({
+            player1: distances[0],
+            player2: distances[1],
+          });
+          console.log('Distances:', distances);
+        } else {
+          console.error('Error calculating distances:', status);
+        }
+      }
+    );
+  };
+
   // Log updated positions whenever the state changes
   useEffect(() => {
     console.log('Updated positions:', positions);
@@ -85,12 +123,19 @@ const Map = ({
     }
   }, [targetPosition, positions]);
 
+  useEffect(() => {
+    if (mapMode === 'result') {
+      calculateDistances();
+    }
+  }, [mapMode, positions, targetPosition]);
+
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps........</div>;
 
   //console.log({ isLoaded, loadError });
 
   return (
+    <>
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
       zoom={13}
@@ -110,17 +155,41 @@ const Map = ({
 
       {/* Render Player 1 and Player 2 markers */}
       {activePlayer === 3 && positions[0].lat && (
+        <>
         <MarkerF
           position={positions[0]}
           icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
         />
+        {distances.player1 && (
+          <InfoWindowF position={{ lat: positions[0].lat + 0.0005, lng: positions[0].lng }} // Offset latitude
+          options={{
+            pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
+          }}>
+            <div style={{ fontSize: '12px', color: 'black' }}>
+              Distance: {distances.player1}
+            </div>
+          </InfoWindowF>
+        )}
+        </>
       )}
 
       {activePlayer === 3 && positions[1].lat && (
+        <>
         <MarkerF
           position={positions[1]}
           icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
         />
+        {distances.player2 && (
+          <InfoWindowF position={{ lat: positions[1].lat + 0.0005, lng: positions[1].lng }} // Offset latitude
+          options={{
+            pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
+          }}>
+            <div style={{ fontSize: '12px', color: 'black' }}>
+              Distance: {distances.player2}
+            </div>
+          </InfoWindowF>
+        )}
+        </>
       )}
 
       {/* Render markers for Player 1 and Player 2 */}
@@ -149,6 +218,15 @@ const Map = ({
         </>
       )}
     </GoogleMap>
+
+    {/* Display distances outside the map container */}
+    {mapMode === 'result' && (
+      <div className="distances" style={{ marginTop: '20px', textAlign: 'center' }}>
+        <p>Player 1 Distance: {distances.player1 || 'Calculating...'}</p>
+        <p>Player 2 Distance: {distances.player2 || 'Calculating...'}</p>
+      </div>
+    )}
+    </>
   );
 };
 
