@@ -11,22 +11,27 @@ const center = {
   lng: -123.11934, // Vancouver longitude
 };
 
-const Map = () => {
+const Map = ({ activePlayer }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
     libraries,
   });
 
-  const [markerPosition, setMarkerPosition] = useState(null);
+  const [positions, setPositions] = useState([{ lat: null, lng: null }, { lat: null, lng: null }]);
 
   // Handle map clicks
   const handleMapClick = (event) => {
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
-    const position = { lat, lng };
+    // setMarkerPosition(position); // Update marker position, single-player old code
 
-    setMarkerPosition(position); // Update marker position
-    console.log(position);
+    setPositions((prevPositions) => {
+      const updatedPositions = [...prevPositions];
+      updatedPositions[activePlayer - 1] = { lat, lng }; // Update the active player's position
+      return updatedPositions;
+    });
+    
+    console.log(positions);
   };
 
   if (loadError) return <div>Error loading maps</div>;
@@ -41,7 +46,18 @@ const Map = () => {
       center={center}
       onClick={handleMapClick} // Add click handler
     >
-      {markerPosition && <Marker position={markerPosition} />} {/* Render marker */}
+      {/* Render markers for Player 1 and Player 2 */}
+      {activePlayer === 1 && positions[0].lat && (
+        <Marker
+          position={positions[0]}
+        />
+      )}
+      {activePlayer === 2 && positions[1].lat && (
+        <Marker
+          position={positions[1]}
+          icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+        />
+      )}
     </GoogleMap>
   );
 };
