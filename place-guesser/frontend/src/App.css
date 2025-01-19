@@ -16,10 +16,15 @@
 }
 
 .side-panel img {
-    max-width: 90%; /* Ensure the image doesn't take up the full width */
-    max-height: 60%; /* Limit the height to 40% of the side panel */
-    object-fit: contain; /* Preserve the aspect ratio of the image */
-    margin: 0 auto; /* Center the image horizontally */
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.mural-image {
+  max-height: 30%;
 }
 
 .content {

@@ -160,6 +160,13 @@ function App() {
                 alt="Mural"
                 style={{ width: '100%' }}
               />
+              <div className="mural-description">
+                <p>
+                  {' '}
+                  place holder texplace holder textplace holder textplace holder
+                  textplace holder textplace holder textt{' '}
+                </p>
+              </div>
               <button onClick={handleNextMural}>Next Mural</button>
             </>
           )}
