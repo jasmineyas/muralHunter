@@ -41,14 +41,14 @@ const Map = ({
   positions,
   setPositions,
   targetPosition,
+  lineCoordinates,
+  setLineCoordinates,
   mapMode,
 }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
     libraries,
   });
-
-  const [lineCoordinates, setLineCoordinates] = useState([]);
 
   // Log updated positions whenever the state changes
   useEffect(() => {

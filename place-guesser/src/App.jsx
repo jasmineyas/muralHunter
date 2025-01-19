@@ -15,6 +15,7 @@ function App() {
     lat: 49.2628,
     lng: -123.0995,
   }); // placeholder for mount pleaset
+  const [lineCoordinates, setLineCoordinates] = useState([]);
 
   const [mapMode, setMapMode] = useState("input"); // Determines map behavior (input/result)
   const [currentImage, setCurrentImage] = useState(placeholder1);
@@ -37,6 +38,7 @@ function App() {
       { lat: null, lng: null },
       { lat: null, lng: null },
     ]);
+    setLineCoordinates([]);
     setMapMode("input"); // Reset to input mode
     // Example: Replace with API call or logic to update the image
     setCurrentImage(placeholder2); // Placeholder 2 - Replace with actual URL
@@ -155,6 +157,8 @@ function App() {
           positions={positions}
           setPositions={setPositions}
           targetPosition={targetPosition}
+          lineCoordinates={lineCoordinates}
+          setLineCoordinates={setLineCoordinates}
           mapMode={mapMode}
         />
       </div>
