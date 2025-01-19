@@ -1,5 +1,5 @@
 import React, { useState, useEffect, act } from "react";
-import { GoogleMap, useLoadScript, Marker, Polyline } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, MarkerF, PolylineF } from "@react-google-maps/api";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -18,7 +18,7 @@ const DashedPolyline = ({
   dashLength = "10px"
 }) => {
   return (
-    <Polyline
+    <PolylineF
       path={path}
       options={{
         strokeColor: color,
@@ -96,24 +96,26 @@ const Map = ({
     >
 
       {/* Map the lineCoordinates to draw dashed lines to the target coordinate */}
-      {activePlayer === 3 && lineCoordinates.map((coordinate, index = 0) =>
-          <DashedPolyline
-            key={index}
-            path={[coordinate, targetPosition]}
-            color="#FF00FF"
-            dashLength="10px"
-          />
-      )}
+  {
+    activePlayer === 3 && lineCoordinates.map((coordinate, index) => (
+        <DashedPolyline
+          key={index}
+          path={[coordinate, targetPosition]}
+          color="#FF00FF"
+          dashLength="10px"
+        />
+    ))
+    }
 
       {/* Render Player 1 and Player 2 markers */}
       {activePlayer === 3 && positions[0].lat && 
-        <Marker 
+        <MarkerF 
           position={positions[0]} 
           icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
       />}
       
       {activePlayer === 3 && positions[1].lat && 
-        <Marker 
+        <MarkerF 
         position={positions[1]} 
         icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
       />}
@@ -122,13 +124,13 @@ const Map = ({
       {mapMode === "input" && (
         <>
           {activePlayer === 1 && positions[0].lat && (
-            <Marker
+            <MarkerF
               position={positions[0]}
               icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
             />
           )}
           {activePlayer === 2 && positions[1].lat && (
-            <Marker
+            <MarkerF
               position={positions[1]}
               icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             />
@@ -137,7 +139,7 @@ const Map = ({
       )}
       {mapMode === "result" && (
         <>
-          <Marker
+          <MarkerF
             position={targetPosition} // Placeholder marker
             icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
           />

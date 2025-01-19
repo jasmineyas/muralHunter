@@ -33,12 +33,13 @@ function App() {
 
   // Fetch a new image for the next mural
   const handleNextMural = () => {
-    console.log("Fetching a new image...");
+    console.log("Next mural clicked. Fetching a new image...");
     setPositions([
       { lat: null, lng: null },
       { lat: null, lng: null },
     ]);
     setLineCoordinates([]);
+    setActivePlayer(null);
     setMapMode("input"); // Reset to input mode
     // Example: Replace with API call or logic to update the image
     setCurrentImage(placeholder2); // Placeholder 2 - Replace with actual URL
