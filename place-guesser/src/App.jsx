@@ -6,44 +6,51 @@ import placeholder2 from "./place-holder2.jpg";
 
 function App() {
   const [activePlayer, setActivePlayer] = useState(null);
-  const [currentScreen, setCurrentScreen] = useState("start");
-  const [userOneGuesses, setUserOneGusses] = useState(null);
-  const [currentGuess, setCurrentGuess] = useState({
+  const [currentSidePanel, setSidePanel] = useState("start");
+  const [positions, setPositions] = useState([
+    { lat: null, lng: null }, // Player 1 position
+    { lat: null, lng: null }, // Player 2 position
+  ]);
+  const [targetPosition, setTargetPosition] = useState({
     lat: 49.2628,
     lng: -123.0995,
   }); // placeholder for mount pleaset
-  const [currentImage, setCurrentImage] = useState(placeholder1); // Track current image
+
+  const [mapMode, setMapMode] = useState("input"); // Determines map behavior (input/result)
+  const [currentImage, setCurrentImage] = useState(placeholder1);
 
   const handleNavigation = (nextState) => {
-    setCurrentScreen(nextState);
+    setSidePanel(nextState);
   };
 
   const handleSubmit = () => {
     console.log("Submitting guess...");
-    setUserOneGusses({ lat: 49.2606, lng: -123.246 }); // placeholder, UBC
+    setMapMode("result");
     handleNavigation("result");
   };
 
   // Fetch a new image for the next mural
-  const fetchNewImage = () => {
+  const handleNextMural = () => {
     console.log("Fetching a new image...");
+    setPositions([
+      { lat: null, lng: null },
+      { lat: null, lng: null },
+    ]);
+    setMapMode("input"); // Reset to input mode
     // Example: Replace with API call or logic to update the image
     setCurrentImage(placeholder2); // Placeholder 2 - Replace with actual URL
-  };
-
-  const handleNextMural = () => {
-    fetchNewImage();
-    setUserOneGusses(null);
     handleNavigation("input");
   };
 
-  console.log("Current Screen:", currentScreen);
+  console.log("Current Side Panel:", currentSidePanel);
+  console.log("Active Player:", activePlayer);
+  console.log("Map Mode:", mapMode);
 
   return (
     <div className="container">
       <div className="side-panel">
         <div className="content">
-          {currentScreen === "start" && (
+          {currentSidePanel === "start" && (
             <>
               <h1>Welcome to the Mural Game!</h1>
               <p>
@@ -56,7 +63,7 @@ function App() {
               </button>
             </>
           )}
-          {currentScreen === "input" && (
+          {currentSidePanel === "input" && (
             <>
               <h1>Round 1 </h1>
               <p>
@@ -84,29 +91,25 @@ function App() {
               <button onClick={handleSubmit}>Submit</button>
             </>
           )}
-          {currentScreen === "result" && (
+          {currentSidePanel === "result" && (
             <>
               <h1>Round 1 result </h1>
               <p> How close did you get?! Please see the map for results.</p>
               <img src={placeholder1} alt="placeholder" />
               <div className="mural-description">
                 <p>
-                  {" "}
-                  <b> About this mural - The Present is a Gift (2021) </b>{" "}
+                  <b> About this mural - The Present is a Gift (2021) </b>
                 </p>
                 <p>
-                  {" "}
                   Artists Drew Young & Jay Senetchko painted the mural - "The
                   Present is a Gift" on the north walls of Belvedere Court
                   apartment building.
                 </p>
                 <p>
-                  {" "}
                   The “Present is a Gift” is a play on words to bring awareness
                   to the present moment, to live in the now.
                 </p>
                 <p>
-                  {" "}
                   The portraits reference two Mount Pleasant residents.
                   PaisleyNahanee (left side) is a Coast-Salish First Nations who
                   was born and grew up in Mount Pleasant. & Dr. Bob has worked
@@ -117,9 +120,8 @@ function App() {
               </div>
               <div className="button-container">
                 <button className="side-by-side" onClick={handleNextMural}>
-                  {" "}
                   Next mural
-                </button>{" "}
+                </button>
                 <button
                   className="side-by-side"
                   onClick={() => handleNavigation("end")}
@@ -130,7 +132,7 @@ function App() {
               </div>
             </>
           )}
-          {currentScreen === "end" && (
+          {currentSidePanel === "end" && (
             <>
               <h1>Have a nice day! </h1>
               <p>
@@ -147,7 +149,13 @@ function App() {
         </div>
       </div>
       <div className="map-container">
-        <Map activePlayer={activePlayer} />
+        <Map
+          activePlayer={activePlayer}
+          positions={positions}
+          setPositions={setPositions}
+          targetPosition={targetPosition}
+          mapMode={mapMode}
+        />
       </div>
     </div>
   );
