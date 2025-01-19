@@ -7,8 +7,8 @@ const mapContainerStyle = {
   height: "100%",
 };
 const center = {
-  lat: 37.7749, // Example: San Francisco latitude
-  lng: -122.4194, // Example: San Francisco longitude
+  lat: 49.246292, // Vancouver latitude
+  lng: -123.11934, // Vancouver longitude
 };
 
 const Map = () => {
