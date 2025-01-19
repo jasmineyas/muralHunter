@@ -106,7 +106,7 @@ function App() {
   };
 
   const handleSetUpBeta = () => {
-    setMapMode('beta-result');
+    setMapMode('beta');
     handleNavigation('beta');
   };
 
@@ -126,6 +126,7 @@ function App() {
     setCurrentBetaImage(uploadPlaceholder);
     setMapMode('start');
     setActivePlayer(1);
+    setBetaTargetPosition({ lat: null, lng: null });
     setPositions([
       { lat: null, lng: null },
       { lat: null, lng: null },
@@ -409,6 +410,7 @@ function App() {
           setPositions={setPositions}
           targetPosition={targetPosition}
           betaTargetPosition={betaTargetPosition}
+          setBetaTargetPosition={setBetaTargetPosition}
           lineCoordinates={lineCoordinates}
           setLineCoordinates={setLineCoordinates}
           mapMode={mapMode}
