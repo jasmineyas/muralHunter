@@ -34,7 +34,6 @@ async function main() {
 app.get('/api/images', async (req, res) => {
   try {
     const images = await Image.find(); // Retrieve all images from the
-    console.log(images);
     res.json(images); // Send the images as a JSON response
   } catch (err) {
     console.error(err);
