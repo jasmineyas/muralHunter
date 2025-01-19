@@ -19,6 +19,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const images = await Image.find();
+    console.log(images);
     res.json(images);
   } catch (err) {
     res.status(500).json({ error: err.message });
