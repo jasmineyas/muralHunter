@@ -82,16 +82,20 @@ function App() {
     setActivePlayer(3);
   };
 
+  const handleEndGame = () => {
+    handleNavigation('end');
+    setActivePlayer(1);
+    setMapMode('start');
+  };
+
   const handlePlayAgain = () => {
     setSidePanel('start');
     setCurrentRound(1);
-    setMapMode('start');
     setPositions([
       { lat: null, lng: null },
       { lat: null, lng: null },
     ]);
     setCurrentMuralIndex(0);
-    setActivePlayer(1);
     if (muralData.length > 0) {
       setTargetPosition({
         lat: muralData[0].latitude,
@@ -179,10 +183,7 @@ function App() {
                 <button className="side-by-side" onClick={handleNextMural}>
                   Next mural
                 </button>
-                <button
-                  className="side-by-side"
-                  onClick={() => handleNavigation('end')}
-                >
+                <button className="side-by-side" onClick={handleEndGame}>
                   End game
                 </button>
               </div>
