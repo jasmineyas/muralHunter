@@ -49,6 +49,7 @@ const Map = ({
   targetPosition,
   lineCoordinates,
   setLineCoordinates,
+  betaTargetPosition,
   mapMode,
 }) => {
   const { isLoaded, loadError } = useLoadScript({
@@ -57,6 +58,48 @@ const Map = ({
   });
 
   const [distances, setDistances] = useState({ player1: null, player2: null });
+  const [betaDistances, setBetaDistances] = useState({
+    player1: null,
+    player2: null,
+  });
+
+  const calculateBetaDistances = () => {
+    if (!betaTargetPosition || !positions[0].lat || !positions[1].lat) return;
+
+    const service = new window.google.maps.DistanceMatrixService();
+    const origins = [
+      new window.google.maps.LatLng(positions[0].lat, positions[0].lng),
+      new window.google.maps.LatLng(positions[1].lat, positions[1].lng),
+    ];
+    const destination = new window.google.maps.LatLng(
+      betaTargetPosition.lat,
+      betaTargetPosition.lng
+    );
+
+    service.getDistanceMatrix(
+      {
+        origins,
+        destinations: [destination],
+        travelMode: window.google.maps.TravelMode.DRIVING, // You can also use WALKING, BICYCLING, or TRANSIT
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          const distances = response.rows.map(
+            (row) => row.elements[0].distance.text
+          );
+          setBetaDistances({
+            player1: distances[0],
+            player2: distances[1],
+          });
+          console.log('Distances:', distances);
+        } else {
+          console.error('Error calculating distances:', status);
+        }
+      }
+    );
+  };
+
+  console.log('betaTargetPosition:', betaTargetPosition);
 
   // Function to calculate distances using Distance Matrix API
   const calculateDistances = () => {
@@ -80,7 +123,9 @@ const Map = ({
       },
       (response, status) => {
         if (status === 'OK') {
-          const distances = response.rows.map((row) => row.elements[0].distance.text);
+          const distances = response.rows.map(
+            (row) => row.elements[0].distance.text
+          );
           setDistances({
             player1: distances[0],
             player2: distances[1],
@@ -129,6 +174,12 @@ const Map = ({
     }
   }, [mapMode, positions, targetPosition]);
 
+  useEffect(() => {
+    if (mapMode === 'beta-result') {
+      calculateBetaDistances();
+    }
+  }, [mapMode, positions, betaTargetPosition]);
+
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps........</div>;
 
@@ -136,96 +187,169 @@ const Map = ({
 
   return (
     <>
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      zoom={13}
-      center={center}
-      onClick={handleMapClick} // Add click handler
-    >
-      {/* Map the lineCoordinates to draw dashed lines to the target coordinate */}
-      {activePlayer === 3 &&
-        lineCoordinates.map((coordinate, index) => (
-          <DashedPolyline
-            key={index}
-            path={[coordinate, targetPosition]}
-            color="#FF00FF"
-            dashLength="10px"
-          />
-        ))}
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        zoom={13}
+        center={center}
+        onClick={handleMapClick} // Add click handler
+      >
+        {/* Map the lineCoordinates to draw dashed lines to the target coordinate */}
+        {activePlayer === 3 &&
+          lineCoordinates.map((coordinate, index) => (
+            <DashedPolyline
+              key={index}
+              path={[coordinate, targetPosition]} // CHANGE THIS
+              color="#FF00FF"
+              dashLength="10px"
+            />
+          ))}
 
-      {/* Render Player 1 and Player 2 markers */}
-      {activePlayer === 3 && positions[0].lat && (
-        <>
-        <MarkerF
-          position={positions[0]}
-          icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-        />
-        {distances.player1 && (
-          <InfoWindowF position={{ lat: positions[0].lat + 0.0005, lng: positions[0].lng }} // Offset latitude
-          options={{
-            pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
-          }}>
-            <div style={{ fontSize: '12px', color: 'black' }}>
-              Distance: {distances.player1}
-            </div>
-          </InfoWindowF>
-        )}
-        </>
-      )}
-
-      {activePlayer === 3 && positions[1].lat && (
-        <>
-        <MarkerF
-          position={positions[1]}
-          icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-        />
-        {distances.player2 && (
-          <InfoWindowF position={{ lat: positions[1].lat + 0.0005, lng: positions[1].lng }} // Offset latitude
-          options={{
-            pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
-          }}>
-            <div style={{ fontSize: '12px', color: 'black' }}>
-              Distance: {distances.player2}
-            </div>
-          </InfoWindowF>
-        )}
-        </>
-      )}
-
-      {/* Render markers for Player 1 and Player 2 */}
-      {mapMode === 'input' && (
-        <>
-          {activePlayer === 1 && positions[0].lat && (
+        {/* Render Player 1 and Player 2 markers */}
+        {activePlayer === 3 && positions[0].lat && (
+          <>
             <MarkerF
               position={positions[0]}
               icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
             />
-          )}
-          {activePlayer === 2 && positions[1].lat && (
+            {distances.player1 && (
+              <InfoWindowF
+                position={{
+                  lat: positions[0].lat + 0.0005,
+                  lng: positions[0].lng,
+                }} // Offset latitude
+                options={{
+                  pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
+                }}
+              >
+                <div style={{ fontSize: '12px', color: 'black' }}>
+                  Distance: {distances.player1}
+                </div>
+              </InfoWindowF>
+            )}
+          </>
+        )}
+
+        {activePlayer === 3 && positions[1].lat && (
+          <>
             <MarkerF
               position={positions[1]}
               icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             />
-          )}
-        </>
-      )}
-      {mapMode === 'result' && (
-        <>
-          <MarkerF
-            position={targetPosition} // Placeholder marker
-            icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-          />
-        </>
-      )}
-    </GoogleMap>
+            {distances.player2 && (
+              <InfoWindowF
+                position={{
+                  lat: positions[1].lat + 0.0005,
+                  lng: positions[1].lng,
+                }} // Offset latitude
+                options={{
+                  pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
+                }}
+              >
+                <div style={{ fontSize: '12px', color: 'black' }}>
+                  Distance: {distances.player2}
+                </div>
+              </InfoWindowF>
+            )}
+          </>
+        )}
 
-    {/* Display distances outside the map container */}
-    {mapMode === 'result' && (
-      <div className="distances" style={{ marginTop: '20px', textAlign: 'center' }}>
-        <p>Player 1 Distance: {distances.player1 || 'Calculating...'}</p>
-        <p>Player 2 Distance: {distances.player2 || 'Calculating...'}</p>
-      </div>
-    )}
+        {/* BETA */}
+        {/* Map the lineCoordinates to draw dashed lines to the target coordinate */}
+        {activePlayer === 4 &&
+          lineCoordinates.map((coordinate, index) => (
+            <DashedPolyline
+              key={index}
+              path={[coordinate, betaTargetPosition]} // CHANGE THIS
+              color="#FF00FF"
+              dashLength="10px"
+            />
+          ))}
+
+        {/* Render Player 1 and Player 2 markers */}
+        {activePlayer === 4 && positions[0].lat && (
+          <>
+            <MarkerF
+              position={positions[0]}
+              icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+            />
+            {betaDistances.player1 && (
+              <InfoWindowF
+                position={{
+                  lat: positions[0].lat + 0.0005,
+                  lng: positions[0].lng,
+                }} // Offset latitude
+                options={{
+                  pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
+                }}
+              >
+                <div style={{ fontSize: '12px', color: 'black' }}>
+                  Distance: {betaDistances.player1}
+                </div>
+              </InfoWindowF>
+            )}
+          </>
+        )}
+
+        {activePlayer === 4 && positions[1].lat && (
+          <>
+            <MarkerF
+              position={positions[1]}
+              icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+            />
+            {betaDistances.player2 && (
+              <InfoWindowF
+                position={{
+                  lat: positions[1].lat + 0.0005,
+                  lng: positions[1].lng,
+                }} // Offset latitude
+                options={{
+                  pixelOffset: new window.google.maps.Size(0, -20), // Optional adjustment
+                }}
+              >
+                <div style={{ fontSize: '12px', color: 'black' }}>
+                  Distance: {betaDistances.player2}
+                </div>
+              </InfoWindowF>
+            )}
+          </>
+        )}
+
+        {/* END BETA */}
+        {mapMode === 'result' && (
+          <>
+            <MarkerF
+              position={targetPosition} // Placeholder marker
+              icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+            />
+          </>
+        )}
+
+        {/* Render markers for Player 1 and Player 2 */}
+        {mapMode === 'input' && (
+          <>
+            {activePlayer === 1 && positions[0].lat && (
+              <MarkerF
+                position={positions[0]}
+                icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+              />
+            )}
+            {activePlayer === 2 && positions[1].lat && (
+              <MarkerF
+                position={positions[1]}
+                icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+              />
+            )}
+          </>
+        )}
+        {mapMode === 'beta-result' && (
+          <>
+            <MarkerF
+              position={betaTargetPosition} // Placeholder marker
+              icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+            />
+          </>
+        )}
+      </GoogleMap>
     </>
   );
 };
