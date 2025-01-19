@@ -7,8 +7,8 @@ const mapContainerStyle = {
   height: "100%",
 };
 const center = {
-  lat: 49.246292, // Vancouver latitude
-  lng: -123.11934, // Vancouver longitude
+  lat: 49.273978, // Vancouver latitude
+  lng: -123.127337, // Vancouver longitude
 };
 
 const Map = ({
@@ -55,7 +55,7 @@ const Map = ({
   return (
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
-      zoom={12}
+      zoom={13}
       center={center}
       onClick={handleMapClick} // Add click handler
     >
