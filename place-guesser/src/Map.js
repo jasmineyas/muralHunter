@@ -1,5 +1,5 @@
 import React, { useState, useEffect, act } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker, Polyline } from "@react-google-maps/api";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -9,6 +9,31 @@ const mapContainerStyle = {
 const center = {
   lat: 49.246292, // Vancouver latitude
   lng: -123.11934, // Vancouver longitude
+};
+
+const DashedPolyline = ({
+  path,
+  color = "#00FFFF",
+  weight = 2,
+  dashLength = "10px"
+}) => {
+  return (
+    <Polyline
+      path={path}
+      options={{
+        strokeColor: color,
+        strokeOpacity: 0, // Make the solid line invisible for dashed effect
+        strokeWeight: weight, // Line thickness
+        icons: [
+          {
+            icon: { path: "M 0,-1 0,1", strokeOpacity: 1, scale: 2 },
+            offset: "0",
+            repeat: dashLength
+          }
+        ]
+      }}
+    />
+  );
 };
 
 const Map = ({
@@ -69,6 +94,16 @@ const Map = ({
       center={center}
       onClick={handleMapClick} // Add click handler
     >
+
+      {/* Map the lineCoordinates to draw dashed lines to the target coordinate */}
+      {activePlayer === 3 && lineCoordinates.map((coordinate, index = 0) =>
+          <DashedPolyline
+            key={index}
+            path={[coordinate, targetPosition]}
+            color="#FF00FF"
+            dashLength="10px"
+          />
+      )}
 
       {/* Render Player 1 and Player 2 markers */}
       {activePlayer === 3 && positions[0].lat && 
