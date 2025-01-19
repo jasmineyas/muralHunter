@@ -7,7 +7,7 @@ import placeholder2 from "./place-holder2.jpg";
 function App() {
   const [activePlayer, setActivePlayer] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("start");
-  const [userOneGuesses, setUserOneGusses] = useState(null);
+  const [userOneGuesses, setUserOneGuesses] = useState(null);
   const [currentGuess, setCurrentGuess] = useState({
     lat: 49.2628,
     lng: -123.0995,
@@ -20,7 +20,8 @@ function App() {
 
   const handleSubmit = () => {
     console.log("Submitting guess...");
-    setUserOneGusses({ lat: 49.2606, lng: -123.246 }); // placeholder, UBC
+    setUserOneGuesses({ lat: 49.2606, lng: -123.246 }); // placeholder, UBC
+    setActivePlayer(3);
     handleNavigation("result");
   };
 
@@ -33,7 +34,8 @@ function App() {
 
   const handleNextMural = () => {
     fetchNewImage();
-    setUserOneGusses(null);
+    setUserOneGuesses(null);
+    setActivePlayer(null);
     handleNavigation("input");
   };
 
@@ -147,7 +149,7 @@ function App() {
         </div>
       </div>
       <div className="map-container">
-        <Map activePlayer={activePlayer} />
+        <Map activePlayer={activePlayer} userOneGuesses={userOneGuesses} />
       </div>
     </div>
   );
