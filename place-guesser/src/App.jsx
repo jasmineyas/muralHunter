@@ -18,6 +18,7 @@ function App() {
     lat: 49.2628,
     lng: -123.0995,
   }); // placeholder for mount pleaset
+  const [lineCoordinates, setLineCoordinates] = useState([]);
 
   const [mapMode, setMapMode] = useState("start"); // Determines map behavior (input/result)
   const [submitEnabled, setSubmitEnabled] = useState(false);
@@ -36,17 +37,27 @@ function App() {
   const handleSubmit = () => {
     console.log("Submitting guess...");
     setMapMode("result");
+    setActivePlayer(3);
+    handleNavigation("result");
+  };
+
+  const handleEndGame = () => {
+    console.log("End game pressed.");
+    setMapMode("start");
+    setActivePlayer(null);
     handleNavigation("result");
     setActivePlayer(1);
   };
 
   // Fetch a new image for the next mural
   const handleNextMural = () => {
-    console.log("Fetching a new image...");
+    console.log("Next mural clicked. Fetching a new image...");
     setPositions([
       { lat: null, lng: null },
       { lat: null, lng: null },
     ]);
+    setLineCoordinates([]);
+    setActivePlayer(null);
     setMapMode("input"); // Reset to input mode
     // Example: Replace with API call or logic to update the image
     setCurrentImage(placeholder2); // Placeholder 2 - Replace with actual URL
@@ -188,6 +199,8 @@ function App() {
           positions={positions}
           setPositions={setPositions}
           targetPosition={targetPosition}
+          lineCoordinates={lineCoordinates}
+          setLineCoordinates={setLineCoordinates}
           mapMode={mapMode}
         />
       </div>
