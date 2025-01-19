@@ -19,13 +19,18 @@ function App() {
     lng: -123.0995,
   }); // placeholder for mount pleaset
 
-  const [mapMode, setMapMode] = useState("input"); // Determines map behavior (input/result)
+  const [mapMode, setMapMode] = useState("start"); // Determines map behavior (input/result)
   const [submitEnabled, setSubmitEnabled] = useState(false);
 
   const [currentImage, setCurrentImage] = useState(placeholder1);
 
   const handleNavigation = (nextState) => {
     setSidePanel(nextState);
+  };
+
+  const handleStartGame = () => {
+    setMapMode("input");
+    handleNavigation("input");
   };
 
   const handleSubmit = () => {
@@ -52,12 +57,11 @@ function App() {
   const handlePlayAgain = () => {
     handleNavigation("start");
     setCurrentRound(1);
-    setMapMode("input");
+    setMapMode("start");
     setPositions([
       { lat: null, lng: null }, // Player 1 position
       { lat: null, lng: null }, // Player 2 position
     ]);
-    setSubmitEnabled(false);
   };
 
   useEffect(() => {
@@ -88,9 +92,7 @@ function App() {
                 masterpiece. 🎨✨
               </p>
               <img style={{ marginTop: "1em" }} src={welcome} alt="welcome" />
-              <button onClick={() => handleNavigation("input")}>
-                Start game
-              </button>
+              <button onClick={handleStartGame}>Start game</button>
             </>
           )}
           {currentSidePanel === "input" && (
