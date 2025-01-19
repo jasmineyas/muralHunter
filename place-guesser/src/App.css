@@ -42,13 +42,59 @@
   height: 100vh; /* Full viewport height */
 }
 
-.image-placeholder {
+.image-panel {
   flex: 1; /* 1/3 width */
   background-color: #f0f0f0; /* Light gray for placeholder */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex; /* Enable flexbox for vertical alignment */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: space-between; /* Push items to top and bottom */
   border-right: 1px solid #ccc; /* Optional: Add a divider */
+  padding: 20px; /* Add padding for better spacing */
+}
+
+.image-panel img {
+  max-width: 100%; /* Limit the width to the container */
+  max-height: 100%; /* Limit the height to the container */
+  object-fit: contain; /* Ensures the entire image fits inside */
+  margin: 0 auto; /* Center image horizontally */
+}
+
+.content {
+  flex-grow: 1; /* Let content take up remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top */
+  margin: 10% 5%; /* Adjust spacing for content */
+}
+
+.image-panel h1 {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.content p {
+  font-size: 1em;
+  text-align: left;
+  line-height: 1.5;
+}
+
+button {
+  margin-top: auto; /* Push button to the bottom */
+  padding: 10px 20px;
+  background-color: #14625a;
+  color: #fff;
+  border: none;
+  width: 100%;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 4px;
+  height: 60px;
+  cursor: pointer;
+  align-self: center; /* Center button horizontally */
+}
+
+button:hover {
+  background-color: #27cebd;
 }
 
 .map-container {
