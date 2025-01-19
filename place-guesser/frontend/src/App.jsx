@@ -152,9 +152,6 @@ function App() {
           {currentSidePanel === 'result' && muralData.length > 0 && (
             <>
               <h1>Round {currentRound} Results</h1>
-              <p>
-                About this mural: {muralData[currentMuralIndex].description}
-              </p>
               <img
                 src={muralData[currentMuralIndex].url}
                 alt="Mural"
@@ -162,9 +159,8 @@ function App() {
               />
               <div className="mural-description">
                 <p>
-                  {' '}
-                  place holder texplace holder textplace holder textplace holder
-                  textplace holder textplace holder textt{' '}
+                  {muralData[currentMuralIndex]?.description ||
+                    'No additional details provided.'}
                 </p>
               </div>
               <button onClick={handleNextMural}>Next Mural</button>
