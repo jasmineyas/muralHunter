@@ -1,67 +1,83 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import Map from "./Map";
-import placeholder1 from "./place-holder.jpg";
-import placeholder2 from "./place-holder2.jpg";
-import welcome from "./2.png";
-import end from "./3.png";
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import Map from './Map';
+import welcome from './2.png';
+import end from './3.png';
 
 function App() {
   const [activePlayer, setActivePlayer] = useState(1);
-  const [currentSidePanel, setSidePanel] = useState("start");
+  const [currentSidePanel, setSidePanel] = useState('start');
   const [currentRound, setCurrentRound] = useState(1);
   const [positions, setPositions] = useState([
-    { lat: null, lng: null }, // Player 1 position
-    { lat: null, lng: null }, // Player 2 position
+    { lat: null, lng: null },
+    { lat: null, lng: null },
   ]);
-  const [targetPosition, setTargetPosition] = useState({
-    lat: 49.2628,
-    lng: -123.0995,
-  }); // placeholder for mount pleaset
-
-  const [mapMode, setMapMode] = useState("start"); // Determines map behavior (input/result)
+  const [targetPosition, setTargetPosition] = useState({ lat: 49.2628, lng: -123.0995 });
+  const [mapMode, setMapMode] = useState('start');
   const [submitEnabled, setSubmitEnabled] = useState(false);
 
-  const [currentImage, setCurrentImage] = useState(placeholder1);
+  const [muralData, setMuralData] = useState([]);
+  const [currentMuralIndex, setCurrentMuralIndex] = useState(0);
 
-  const handleNavigation = (nextState) => {
-    setSidePanel(nextState);
-  };
+  // Fetch data from the backend
+  useEffect(() => {
+    const fetchMurals = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/images');
+        const data = await response.json();
+        setMuralData(data);
+        if (data.length > 0) {
+          setTargetPosition({ lat: data[0].latitude, lng: data[0].longitude });
+        }
+      } catch (error) {
+        console.error('Error fetching mural data:', error);
+      }
+    };
+
+    fetchMurals();
+  }, []);
 
   const handleStartGame = () => {
-    setMapMode("input");
-    handleNavigation("input");
+    setMapMode('input');
+    setSidePanel('input');
+  };
+
+  const handleNextMural = () => {
+    const nextIndex = (currentMuralIndex + 1) % muralData.length;
+    setCurrentMuralIndex(nextIndex);
+    setTargetPosition({
+      lat: muralData[nextIndex].latitude,
+      lng: muralData[nextIndex].longitude,
+    });
+    setCurrentRound((prevRound) => prevRound + 1);
+    setSidePanel('input');
+    setMapMode('input');
+    setPositions([
+      { lat: null, lng: null },
+      { lat: null, lng: null },
+    ]);
   };
 
   const handleSubmit = () => {
-    console.log("Submitting guess...");
-    setMapMode("result");
-    handleNavigation("result");
-    setActivePlayer(1);
-  };
-
-  // Fetch a new image for the next mural
-  const handleNextMural = () => {
-    console.log("Fetching a new image...");
-    setPositions([
-      { lat: null, lng: null },
-      { lat: null, lng: null },
-    ]);
-    setMapMode("input"); // Reset to input mode
-    // Example: Replace with API call or logic to update the image
-    setCurrentImage(placeholder2); // Placeholder 2 - Replace with actual URL
-    handleNavigation("input");
-    setCurrentRound(currentRound + 1);
+    setMapMode('result');
+    setSidePanel('result');
   };
 
   const handlePlayAgain = () => {
-    handleNavigation("start");
+    setSidePanel('start');
     setCurrentRound(1);
-    setMapMode("start");
+    setMapMode('start');
     setPositions([
-      { lat: null, lng: null }, // Player 1 position
-      { lat: null, lng: null }, // Player 2 position
+      { lat: null, lng: null },
+      { lat: null, lng: null },
     ]);
+    setCurrentMuralIndex(0);
+    if (muralData.length > 0) {
+      setTargetPosition({
+        lat: muralData[0].latitude,
+        lng: muralData[0].longitude,
+      });
+    }
   };
 
   useEffect(() => {
@@ -70,51 +86,40 @@ function App() {
     setSubmitEnabled(bothPlayersReady);
   }, [positions]);
 
-  console.log("submitEnabled", submitEnabled);
-  //   console.log("Current Side Panel:", currentSidePanel);
-  //   console.log("Active Player:", activePlayer);
-  //   console.log("Map Mode:", mapMode);
-
   return (
     <div className="container">
       <div className="side-panel">
         <div className="content">
-          {currentSidePanel === "start" && (
+          {currentSidePanel === 'start' && (
             <>
               <h1>Welcome to the mural game!</h1>
-              <p className="welcome-end-text">
+              <p>
                 Vancouver is home to an incredible collection of vibrant murals
                 that bring the city’s streets to life.
               </p>
-              <p className="welcome-end-text">
-                Explore these works of art and see how many locations you can
-                guess! Let’s celebrate creativity and the stories behind each
-                masterpiece. 🎨✨
-              </p>
-              <img style={{ marginTop: "1em" }} src={welcome} alt="welcome" />
-              <button onClick={handleStartGame}>Start game</button>
+              <img style={{ marginTop: '1em' }} src={welcome} alt="welcome" />
+              <button onClick={handleStartGame}>Start Game</button>
             </>
           )}
-          {currentSidePanel === "input" && (
+
+          {currentSidePanel === 'input' && muralData.length > 0 && (
             <>
-              <h1>Round {currentRound} </h1>
-              <p>
-                {" "}
-                On the map, pleaes drop the pin at where you think the mural is
-                located, then click the submit button.📍
-              </p>
-              <img src={placeholder1} alt="placeholder" />
+              <h1>Round {currentRound}</h1>
+              <p>Drop a pin where you think the mural is located, then click submit.</p>
+              <img
+                src={muralData[currentMuralIndex].url}
+                alt="Mural"
+                style={{ width: '100%' }}
+              />
               <div className="button-group">
-                {/* Player 1 Button */}
                 <button
-                  className={activePlayer === 1 ? "active" : ""}
+                  className={activePlayer === 1 ? 'active' : ''}
                   onClick={() => setActivePlayer(1)}
                 >
                   Player 1
                 </button>
-                {/* Player 2 Button */}
                 <button
-                  className={activePlayer === 2 ? "active" : ""}
+                  className={activePlayer === 2 ? 'active' : ''}
                   onClick={() => setActivePlayer(2)}
                 >
                   Player 2
@@ -125,63 +130,33 @@ function App() {
               </button>
             </>
           )}
-          {currentSidePanel === "result" && (
+
+          {currentSidePanel === 'result' && muralData.length > 0 && (
             <>
-              <h1>Round {currentRound} result </h1>
-              <p> Whose guess is closer?! Please see the map for results.</p>
-              <img src={placeholder1} alt="placeholder" />
-              <div className="mural-description">
-                <p>
-                  <b> About this mural - The Present is a Gift (2021) </b>
-                </p>
-                <p>
-                  Artists Drew Young & Jay Senetchko painted the mural - "The
-                  Present is a Gift" on the north walls of Belvedere Court
-                  apartment building.
-                </p>
-                <p>
-                  The “Present is a Gift” is a play on words to bring awareness
-                  to the present moment, to live in the now.
-                </p>
-                <p>
-                  The portraits reference two Mount Pleasant residents.
-                  PaisleyNahanee (left side) is a Coast-Salish First Nations who
-                  was born and grew up in Mount Pleasant. & Dr. Bob has worked
-                  at an area optometrist office for over 6 decades.
-                </p>
-                <p>
-                  As two longstanding residents, Paisley and Bob capture the
-                  essence, history and culture of Mount Pleasant.
-                </p>
-              </div>
-              <div className="button-container">
-                <button className="side-by-side" onClick={handleNextMural}>
-                  Next mural
-                </button>
-                <button
-                  className="side-by-side"
-                  onClick={() => handleNavigation("end")}
-                >
-                  End game
-                </button>
-              </div>
+              <h1>Round {currentRound} Results</h1>
+              <p>
+                About this mural: {muralData[currentMuralIndex].description}
+              </p>
+              <img
+                src={muralData[currentMuralIndex].url}
+                alt="Mural"
+                style={{ width: '100%' }}
+              />
+              <button onClick={handleNextMural}>Next Mural</button>
             </>
           )}
-          {currentSidePanel === "end" && (
+
+          {currentSidePanel === 'end' && (
             <>
-              <h1>Have a nice day! </h1>
-              <p className="welcome-end-text">
-                Thank you for playing the game.{" "}
-              </p>
-              <p className="welcome-end-text">
-                Remember to go outside and actually touch grass. 🌿 😎
-              </p>
-              <img style={{ marginTop: "1em" }} src={end} alt="end" />
-              <button onClick={handlePlayAgain}>Play again</button>
+              <h1>Thank you for playing!</h1>
+              <p>We hope you enjoyed exploring Vancouver's murals!</p>
+              <img style={{ marginTop: '1em' }} src={end} alt="end" />
+              <button onClick={handlePlayAgain}>Play Again</button>
             </>
           )}
         </div>
       </div>
+
       <div className="map-container">
         <Map
           activePlayer={activePlayer}
