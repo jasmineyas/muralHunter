@@ -1,2 +1,0 @@
-# placeGuesser
-nwPlus2025
