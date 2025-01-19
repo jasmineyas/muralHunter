@@ -7,7 +7,7 @@ import welcome from "./2.png";
 import end from "./3.png";
 
 function App() {
-  const [activePlayer, setActivePlayer] = useState(null);
+  const [activePlayer, setActivePlayer] = useState(1);
   const [currentSidePanel, setSidePanel] = useState("start");
   const [currentRound, setCurrentRound] = useState(1);
   const [positions, setPositions] = useState([
@@ -32,7 +32,7 @@ function App() {
     console.log("Submitting guess...");
     setMapMode("result");
     handleNavigation("result");
-    setActivePlayer(null);
+    setActivePlayer(1);
   };
 
   // Fetch a new image for the next mural
@@ -52,6 +52,12 @@ function App() {
   const handlePlayAgain = () => {
     handleNavigation("start");
     setCurrentRound(1);
+    setMapMode("input");
+    setPositions([
+      { lat: null, lng: null }, // Player 1 position
+      { lat: null, lng: null }, // Player 2 position
+    ]);
+    setSubmitEnabled(false);
   };
 
   useEffect(() => {
