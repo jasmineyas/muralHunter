@@ -79,6 +79,17 @@ button.side-by-side {
   text-align: center;
 }
 
+.button-group {
+  display: flex; /* Use Flexbox for horizontal alignment */
+  gap: 10px; /* Add space between the buttons */
+  margin-top: 20px; /* Add some spacing above the group */
+}
+
+button.active {
+  background-color: #27cebd; /* Highlight color (e.g., orange) */
+  color: #000; /* Optional: Change text color for contrast */
+}
+
 button:hover {
   background-color: #368f84;
 }

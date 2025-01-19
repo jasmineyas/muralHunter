@@ -5,6 +5,7 @@ import placeholder1 from "./place-holder.jpg";
 import placeholder2 from "./place-holder2.jpg";
 
 function App() {
+  const [activePlayer, setActivePlayer] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("start");
   const [userOneGuesses, setUserOneGusses] = useState(null);
   const [currentGuess, setCurrentGuess] = useState({
@@ -64,6 +65,22 @@ function App() {
                 located, then click the submit button.📍
               </p>
               <img src={placeholder1} alt="placeholder" />
+              <div className="button-group">
+                {/* Player 1 Button */}
+                <button
+                  className={activePlayer === 1 ? "active" : ""}
+                  onClick={() => setActivePlayer(1)}
+                >
+                  Player 1
+                </button>
+                {/* Player 2 Button */}
+                <button
+                  className={activePlayer === 2 ? "active" : ""}
+                  onClick={() => setActivePlayer(2)}
+                >
+                  Player 2
+                </button>
+              </div>
               <button onClick={handleSubmit}>Submit</button>
             </>
           )}
@@ -130,7 +147,7 @@ function App() {
         </div>
       </div>
       <div className="map-container">
-        <Map />
+        <Map activePlayer={activePlayer} />
       </div>
     </div>
   );
