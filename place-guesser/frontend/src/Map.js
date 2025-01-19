@@ -51,6 +51,7 @@ const Map = ({
   setLineCoordinates,
   betaTargetPosition,
   mapMode,
+  setBetaTargetPosition,
 }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Read the API
@@ -148,9 +149,12 @@ const Map = ({
     console.log('Map clicked:', event.latLng.toJSON());
     console.log('activePlayer', activePlayer);
     console.log('mapMode', mapMode);
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+
     if (mapMode === 'input') {
-      const lat = event.latLng.lat();
-      const lng = event.latLng.lng();
+      //   const lat = event.latLng.lat();
+      //   const lng = event.latLng.lng();
       // setMarkerPosition(position); // Update marker position, single-player old code
       setPositions((prevPositions) => {
         const updatedPositions = [...prevPositions];
@@ -159,6 +163,12 @@ const Map = ({
       });
       // console.log(positions);
       console.log(`Player ${activePlayer} dropped a pin at:`, { lat, lng });
+    } else if (mapMode === 'beta') {
+      //   const lat = event.latLng.lat();
+      //   const lng = event.latLng.lng();
+      setBetaTargetPosition({ lat, lng });
+      console.log('Beta target position updated: ', { lat, lng });
+      // Update the target position state
     }
   };
 
@@ -342,6 +352,14 @@ const Map = ({
           </>
         )}
         {mapMode === 'beta-result' && (
+          <>
+            <MarkerF
+              position={betaTargetPosition} // Placeholder marker
+              icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+            />
+          </>
+        )}
+        {mapMode === 'beta' && (
           <>
             <MarkerF
               position={betaTargetPosition} // Placeholder marker
