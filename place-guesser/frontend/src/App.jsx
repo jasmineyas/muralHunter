@@ -21,6 +21,7 @@ function App() {
 
   const [muralData, setMuralData] = useState([]);
   const [currentMuralIndex, setCurrentMuralIndex] = useState(0);
+  const [lineCoordinates, setLineCoordinates] = useState([]);
 
   // Fetch data from the backend
   useEffect(() => {
@@ -61,6 +62,7 @@ function App() {
       });
       setCurrentRound((prevRound) => prevRound + 1); // Increment the round number
       setActivePlayer(1);
+      setLineCoordinates([]);
       setSidePanel('input');
       setMapMode('input');
       setPositions([
@@ -73,6 +75,7 @@ function App() {
   const handleSubmit = () => {
     setMapMode('result');
     setSidePanel('result');
+    setActivePlayer(3);
   };
 
   const handlePlayAgain = () => {
@@ -178,6 +181,8 @@ function App() {
           positions={positions}
           setPositions={setPositions}
           targetPosition={targetPosition}
+          lineCoordinates={lineCoordinates}
+          setLineCoordinates={setLineCoordinates}
           mapMode={mapMode}
         />
       </div>
