@@ -125,6 +125,7 @@ function App() {
                 submit.
               </p>
               <img
+                className="mural-image"
                 src={muralData[currentMuralIndex].url}
                 alt="Mural"
                 style={{ width: '100%' }}
@@ -156,6 +157,7 @@ function App() {
                 About this mural: {muralData[currentMuralIndex].description}
               </p>
               <img
+                className="mural-image"
                 src={muralData[currentMuralIndex].url}
                 alt="Mural"
                 style={{ width: '100%' }}
