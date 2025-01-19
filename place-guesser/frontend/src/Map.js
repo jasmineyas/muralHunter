@@ -1,10 +1,10 @@
-import React, { useState, useEffect, act } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import React, { useState, useEffect, act } from 'react';
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 
-const libraries = ["places"];
+const libraries = ['places'];
 const mapContainerStyle = {
-  width: "100%",
-  height: "100%",
+  width: '100%',
+  height: '100%',
 };
 const center = {
   lat: 49.246292, // Vancouver latitude
@@ -25,15 +25,15 @@ const Map = ({
 
   // Log updated positions whenever the state changes
   useEffect(() => {
-    console.log("Updated positions:", positions);
+    console.log('Updated positions:', positions);
   }, [positions]);
 
   // Handle map clicks
   const handleMapClick = (event) => {
-    console.log("Map clicked:", event.latLng.toJSON());
-    console.log("activePlayer", activePlayer);
-    console.log("mapMode", mapMode);
-    if (mapMode === "input") {
+    console.log('Map clicked:', event.latLng.toJSON());
+    console.log('activePlayer', activePlayer);
+    console.log('mapMode', mapMode);
+    if (mapMode === 'input') {
       const lat = event.latLng.lat();
       const lng = event.latLng.lng();
       // setMarkerPosition(position); // Update marker position, single-player old code
@@ -60,7 +60,7 @@ const Map = ({
       onClick={handleMapClick} // Add click handler
     >
       {/* Render markers for Player 1 and Player 2 */}
-      {mapMode === "input" && (
+      {mapMode === 'input' && (
         <>
           {activePlayer === 1 && positions[0].lat && (
             <Marker
@@ -76,7 +76,7 @@ const Map = ({
           )}
         </>
       )}
-      {mapMode === "result" && (
+      {mapMode === 'result' && (
         <>
           <Marker
             position={targetPosition} // Placeholder marker
