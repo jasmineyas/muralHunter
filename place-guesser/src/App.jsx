@@ -3,10 +3,13 @@ import "./App.css";
 import Map from "./Map";
 import placeholder1 from "./place-holder.jpg";
 import placeholder2 from "./place-holder2.jpg";
+import welcome from "./2.png";
+import end from "./3.png";
 
 function App() {
   const [activePlayer, setActivePlayer] = useState(null);
   const [currentSidePanel, setSidePanel] = useState("start");
+  const [currentRound, setCurrentRound] = useState(1);
   const [positions, setPositions] = useState([
     { lat: null, lng: null }, // Player 1 position
     { lat: null, lng: null }, // Player 2 position
@@ -27,6 +30,7 @@ function App() {
     console.log("Submitting guess...");
     setMapMode("result");
     handleNavigation("result");
+    setActivePlayer(null);
   };
 
   // Fetch a new image for the next mural
@@ -40,6 +44,12 @@ function App() {
     // Example: Replace with API call or logic to update the image
     setCurrentImage(placeholder2); // Placeholder 2 - Replace with actual URL
     handleNavigation("input");
+    setCurrentRound(currentRound + 1);
+  };
+
+  const handlePlayAgain = () => {
+    handleNavigation("start");
+    setCurrentRound(1);
   };
 
   console.log("Current Side Panel:", currentSidePanel);
@@ -52,20 +62,25 @@ function App() {
         <div className="content">
           {currentSidePanel === "start" && (
             <>
-              <h1>Welcome to the Mural Game!</h1>
-              <p>
-                {" "}
-                Guess the locations of beauitful murals around the City of
-                Vancouver!
+              <h1>Welcome to the mural game!</h1>
+              <p className="welcome-end-text">
+                Vancouver is home to an incredible collection of vibrant murals
+                that bring the city’s streets to life.
               </p>
+              <p className="welcome-end-text">
+                Explore these works of art and see how many locations you can
+                guess! Let’s celebrate creativity and the stories behind each
+                masterpiece. 🎨✨
+              </p>
+              <img style={{ marginTop: "1em" }} src={welcome} alt="welcome" />
               <button onClick={() => handleNavigation("input")}>
-                Start Game
+                Start game
               </button>
             </>
           )}
           {currentSidePanel === "input" && (
             <>
-              <h1>Round 1 </h1>
+              <h1>Round {currentRound} </h1>
               <p>
                 {" "}
                 On the map, pleaes drop the pin at where you think the mural is
@@ -93,7 +108,7 @@ function App() {
           )}
           {currentSidePanel === "result" && (
             <>
-              <h1>Round 1 result </h1>
+              <h1>Round {currentRound} result </h1>
               <p> How close did you get?! Please see the map for results.</p>
               <img src={placeholder1} alt="placeholder" />
               <div className="mural-description">
@@ -126,8 +141,7 @@ function App() {
                   className="side-by-side"
                   onClick={() => handleNavigation("end")}
                 >
-                  {" "}
-                  End game{" "}
+                  End game
                 </button>
               </div>
             </>
@@ -135,15 +149,12 @@ function App() {
           {currentSidePanel === "end" && (
             <>
               <h1>Have a nice day! </h1>
-              <p>
-                {" "}
-                Thank you for playing the game. Remember to go outside and
-                actually touch grass.
+              <p className="welcome-end-text">Thank you for playing the game. </p>
+              <p className="welcome-end-text">
+                Remember to go outside and actually touch grass. 🌿 😎
               </p>
-              <button onClick={() => handleNavigation("start")}>
-                {" "}
-                Play again{" "}
-              </button>
+              <img style={{ marginTop: "1em" }} src={end} alt="end" />
+              <button onClick={handlePlayAgain}>Play again</button>
             </>
           )}
         </div>
