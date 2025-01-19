@@ -17,7 +17,10 @@ const Map = ({ activePlayer }) => {
     libraries,
   });
 
-  const [positions, setPositions] = useState([{ lat: null, lng: null }, { lat: null, lng: null }]);
+  const [positions, setPositions] = useState([
+    { lat: null, lng: null },
+    { lat: null, lng: null },
+  ]);
 
 
   // Handle map clicks
@@ -31,14 +34,14 @@ const Map = ({ activePlayer }) => {
       updatedPositions[activePlayer - 1] = { lat, lng }; // Update the active player's position
       return updatedPositions;
     });
-    
+
     // console.log(positions);
   };
 
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps........</div>;
 
-  console.log({ isLoaded, loadError });
+  //console.log({ isLoaded, loadError });
 
   console.log(positions);
 
@@ -53,6 +56,7 @@ const Map = ({ activePlayer }) => {
       {activePlayer === 1 && positions[0].lat && (
         <Marker
           position={positions[0]}
+          icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
         />
       )}
       {activePlayer === 2 && positions[1].lat && (
