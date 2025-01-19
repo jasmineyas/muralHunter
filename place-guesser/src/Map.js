@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 
 const libraries = ["places"];
@@ -19,6 +19,11 @@ const Map = ({ activePlayer }) => {
 
   const [positions, setPositions] = useState([{ lat: null, lng: null }, { lat: null, lng: null }]);
 
+  // Log updated positions whenever the state changes
+  useEffect(() => {
+    console.log(positions);
+  }, [positions]);
+
   // Handle map clicks
   const handleMapClick = (event) => {
     const lat = event.latLng.lat();
@@ -31,7 +36,7 @@ const Map = ({ activePlayer }) => {
       return updatedPositions;
     });
     
-    console.log(positions);
+    // console.log(positions);
   };
 
   if (loadError) return <div>Error loading maps</div>;
