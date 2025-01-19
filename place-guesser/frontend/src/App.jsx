@@ -46,6 +46,10 @@ function App() {
     setSidePanel('input');
   };
 
+  const handleNavigation = (nextState) => {
+    setSidePanel(nextState);
+  };
+
   const handleNextMural = () => {
     const nextIndex = currentMuralIndex + 1;
 
@@ -87,6 +91,7 @@ function App() {
       { lat: null, lng: null },
     ]);
     setCurrentMuralIndex(0);
+    setActivePlayer(1);
     if (muralData.length > 0) {
       setTargetPosition({
         lat: muralData[0].latitude,
@@ -108,9 +113,14 @@ function App() {
           {currentSidePanel === 'start' && (
             <>
               <h1>Welcome to the mural game!</h1>
-              <p>
+              <p className="welcome-end-text">
                 Vancouver is home to an incredible collection of vibrant murals
                 that bring the city’s streets to life.
+              </p>
+              <p className="welcome-end-text">
+                Explore these works of art and see how many locations you can
+                guess! Let’s celebrate creativity and the stories behind each
+                masterpiece. 🎨✨
               </p>
               <img style={{ marginTop: '1em' }} src={welcome} alt="welcome" />
               <button onClick={handleStartGame}>Start Game</button>
@@ -169,7 +179,17 @@ function App() {
                   textplace holder textplace holder textt{' '}
                 </p>
               </div>
-              <button onClick={handleNextMural}>Next Mural</button>
+              <div className="button-container">
+                <button className="side-by-side" onClick={handleNextMural}>
+                  Next mural
+                </button>
+                <button
+                  className="side-by-side"
+                  onClick={() => handleNavigation('end')}
+                >
+                  End game
+                </button>
+              </div>
             </>
           )}
 
