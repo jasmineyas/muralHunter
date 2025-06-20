@@ -133,3 +133,13 @@ button:hover {
   flex: 2;
   height: 100%;
 }
+
+.menu-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-image {
+  margin-top: 10% !important;
+}

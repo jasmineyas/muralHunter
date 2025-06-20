@@ -224,14 +224,25 @@ function App() {
           )}
           {currentSidePanel === 'menu' && (
             <>
-              <h1>Choose your game mode!</h1>
-              <p>
-                Play with a friend using our curated list of Vancouver murals!
-              </p>
-              <button onClick={handleStartStandardGame}> Standard mode</button>
-              <p>Upload your own mural image for your friends to guess! 💪 </p>
-              <button onClick={handleSetUpBeta}> Beta </button>
-              <img src={menu} alt="select-menu-graphic" />
+              <div className="menu-container">
+                <h1>Choose your game mode!</h1>
+                <p>
+                  Play with a friend using our curated list of Vancouver murals!
+                </p>
+                <button onClick={handleStartStandardGame}>
+                  {' '}
+                  Standard mode
+                </button>
+                <p>
+                  Upload your own mural image for your friends to guess! 💪{' '}
+                </p>
+                <button onClick={handleSetUpBeta}> Beta </button>
+                <img
+                  src={menu}
+                  alt="select-menu-graphic"
+                  className="menu-image"
+                />
+              </div>
             </>
           )}
           {currentSidePanel === 'beta' && (
