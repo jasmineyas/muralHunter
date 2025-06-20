@@ -64,52 +64,26 @@ const Map = ({
     player2: null,
   });
 
-  const calculateBetaDistances = () => {
-    if (!betaTargetPosition || !positions[0].lat || !positions[1].lat) return;
+  const calculateDistances = (targetPosition, playerPositions) => {
+    if (
+      !targetPosition ||
+      !playerPositions[0]?.lat ||
+      !playerPositions[1]?.lat
+    ) {
+      console.error('Invalid positions or targetPosition');
+      return;
+    }
 
     const service = new window.google.maps.DistanceMatrixService();
     const origins = [
-      new window.google.maps.LatLng(positions[0].lat, positions[0].lng),
-      new window.google.maps.LatLng(positions[1].lat, positions[1].lng),
-    ];
-    const destination = new window.google.maps.LatLng(
-      betaTargetPosition.lat,
-      betaTargetPosition.lng
-    );
-
-    service.getDistanceMatrix(
-      {
-        origins,
-        destinations: [destination],
-        travelMode: window.google.maps.TravelMode.DRIVING, // You can also use WALKING, BICYCLING, or TRANSIT
-      },
-      (response, status) => {
-        if (status === 'OK') {
-          const distances = response.rows.map(
-            (row) => row.elements[0].distance.text
-          );
-          setBetaDistances({
-            player1: distances[0],
-            player2: distances[1],
-          });
-          console.log('Distances:', distances);
-        } else {
-          console.error('Error calculating distances:', status);
-        }
-      }
-    );
-  };
-
-  console.log('betaTargetPosition:', betaTargetPosition);
-
-  // Function to calculate distances using Distance Matrix API
-  const calculateDistances = () => {
-    if (!targetPosition || !positions[0].lat || !positions[1].lat) return;
-
-    const service = new window.google.maps.DistanceMatrixService();
-    const origins = [
-      new window.google.maps.LatLng(positions[0].lat, positions[0].lng),
-      new window.google.maps.LatLng(positions[1].lat, positions[1].lng),
+      new window.google.maps.LatLng(
+        playerPositions[0].lat,
+        playerPositions[0].lng
+      ),
+      new window.google.maps.LatLng(
+        playerPositions[1].lat,
+        playerPositions[1].lng
+      ),
     ];
     const destination = new window.google.maps.LatLng(
       targetPosition.lat,
@@ -125,9 +99,9 @@ const Map = ({
       (response, status) => {
         if (status === 'OK') {
           const distances = response.rows.map(
-            (row) => row.elements[0].distance.text
+            (row) => row.elements[0]?.distance?.text || 'Unknown'
           );
-          setDistances({
+          setBetaDistances({
             player1: distances[0],
             player2: distances[1],
           });
@@ -180,13 +154,13 @@ const Map = ({
 
   useEffect(() => {
     if (mapMode === 'result') {
-      calculateDistances();
+      calculateDistances(targetPosition, positions);
     }
   }, [mapMode, positions, targetPosition]);
 
   useEffect(() => {
     if (mapMode === 'beta-result') {
-      calculateBetaDistances();
+      calculateDistances(betaTargetPosition, positions);
     }
   }, [mapMode, positions, betaTargetPosition]);
 
